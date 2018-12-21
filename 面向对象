@@ -50,6 +50,96 @@ SuperClass.call(this,id);   call的实现是深拷贝
 结合类式继承和构造函数继承
 ①弥补了构造函数继承无法继承父类原型上属性和方法的缺点
 ②弥补了类式继承中父类共有变量为引用类型时，子类继承该变量后会相互影响的缺点
+//声明子类
+function SubClass(name, time){
+	//构造函数式继承父类name属性
+	SuperClass.call(this, name);
+	//子类中新增共有属性
+	this.time = time;
+}
+// 类式继承 子类原型继承父类
+SubClass.prototype = new SuperClass();
+// 子类原型方法
+SubClass.prototype.getTime = function(){
+	console.log(this.time);
+}
+
+
+
+
+4）原型式继承
+借助原型prototype可以根据已有的对象创建一个新的对象，同时不必创建新的自定义对象类型。
+function inheritObject()｛
+	//声明一个过度函数对象
+	function F()｛｝
+	//过度对象的原型继承父对象
+	F.prototype = o;
+	//返回过度对象的一个实例，该实例的原型继承了父对象
+	return new F();
+｝
+
+
+5)寄生式继承
+寄生式继承就是对原型继承的第二次封装，并且在这第二次封装过程中对继承的对象进行了拓展，这样新创建的对象不仅仅有父类中的属性和方法而且有新添加的属性和方法。
+function(obj){
+	//通过原型继承方式创建新对象
+	var o =new inheritObject(obj);
+	o.getName = function(){
+		console.log(name);
+	}
+	//返回拓展后的新对象
+	return o;
+}
+
+6)寄生组合式继承
+是寄生式继承和构造函数继承的组合。
+
+function inheritPrototype(subClass, superClass){
+	//复制一份父类的原型副本保存在变量中
+	var p = inheritObject(superClass.prototype);
+	//修正因为重写子类原型导致子类的constructor属性被修改
+	p.constructor = subClass;
+	//设置子类的原型
+	subClass.protptype = p;
+}
+
+//定义父类
+function SuperClass(){
+	this.name = name;
+	this.colors = ["red","blue","green"];
+}
+//定义父类原型方法
+SuperClass.prototype.getName = function(){
+	console.log(this.name);
+}
+
+//定义子类
+function SubClass(name, time){
+	//构造函数式继承
+	SuperClass.call(this, name);
+	//子类新增属性
+	this.time = time;
+}
+
+//寄生式继承父类原型
+inheritPrototype(SubClass, SuperClass);
+
+//子类新增原型方法
+SubClass.prototype.getTime = function(){
+	console.log(this.time);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
