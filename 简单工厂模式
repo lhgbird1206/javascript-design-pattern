@@ -1,0 +1,69 @@
+创建型设计模式是一类处理对象创建的设计模式，通过某种方式控制对象的创建来避免基本对象创建时可能导致设计上的问题或增加设计上的复杂度。
+
+1)简单工厂模式
+理念是创建对象。
+有两种简单工厂模式
+①通过类实例化对象创建
+②通过创建一个新对象然后包装增强其属性和功能来实现
+
+两种方式的区别：
+前一种，如果这些类继承同一个父类，那么他们的父类原型上的方法是可以共用的。后一种，创建的对象都是一个新的个体，所以他们的方法就不能共用了。
+
+第一种
+var LoginAlert = function(text){
+	this.content = text;
+}
+LoginAlert.prototype.show = function(){
+	//显示警示框
+}
+
+
+var LoginConfirm = function(text){
+	this.content = text;
+}
+LoginConfirm.prototype.show = function(){
+	//显示确认框
+}
+
+var LoginPrompt = function(text){
+	this.content = text;
+}
+LoginPrompt.prototype.show = function(){
+	//显示提示框
+}
+
+
+var PopFactory = function(name){
+	switch(name){
+		case 'alert':
+			return new LoginAlert();
+		case 'confirm':
+			return new LoginConfirm();
+		case 'prompt':
+			return new LoginPrompt();
+	}
+}
+
+第二种
+function createPop(type, text){
+	//创建一个对象，并对对象拓展属性和方法
+	var o = new Object();
+	o.content = text;
+	o.show = function(){
+		//显示方法
+	}；
+	if(type == 'alert'){
+		//警示框差异部分
+	}
+	if(type == 'prompt'){
+		//提示框差异部分
+	}
+	if(type == 'confirm'){
+		//确认框差异部分
+	}
+	//将对象返回
+	return o;
+}
+
+//创建警示框
+var userNameAlert = createPop('alert','用户名不能超过16个字符');
