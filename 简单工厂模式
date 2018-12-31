@@ -67,3 +67,221 @@ function createPop(type, text){
 
 //创建警示框
 var userNameAlert = createPop('alert','用户名不能超过16个字符');
+
+
+
+2）工厂方法模式
+通过对产品类的抽象使其创建业务主要负责用于创建多类产品的实例
+
+var Factory = function(type, content){
+	if(thi instanceof Factory){
+		var s = new this[type](content);
+		return s;
+	}else{
+		return new Factory(type, content);
+	}
+}
+//工厂原型中设置创建所有类型数据对象的基类
+Factory.prototype = {
+	Java:funtion(){
+		// .....
+	},
+	Javascript:function(){
+		// ......
+	},
+	UI:function(){
+		this.content = content;
+		(function(content){
+			var div = document.createElement('div');
+			div.innerHTML = content;
+			div.style.border = '1px solid red';
+			document.getElementById('container').appendChild(div);
+		})(content);
+	},
+	php:function(){
+		// ......
+	}
+}
+
+var data = [
+{type:'javascript', content:'javascript哪家强'}，
+{type:'java', content:'java哪家强'}，
+{type:'php', content:'php哪家强'}，
+{type:'UI', content:'UI哪家强'}，
+{type:'javascript', content:'javascript哪家强'}
+]
+
+for(var i = 5; i >=0; i--){
+	Factory(data[i].type, data[i].content);
+}
+
+
+3）抽象工厂模式
+通过对类的工厂抽象使其业务用于对产品类簇的创建，而不负责创建某一类产品的实例
+
+var VehicleFactory = function(subType, superType){
+	 //判断抽象工厂中是否有该抽象类
+	 if(typeof VehicleFactory[superType] === 'function'){
+	 	//缓存类
+	 	function F(){}
+	 	//继承父类属性和方法
+	 	F.prototype = new VehicleFactory[superType]();
+	 	//将子类constructor指向子类
+	 	subType.constructor = subType;
+	 	//子类原型继承'父类'
+	 	subType.prototype = new F();
+	 }else{
+	 	//不存在该抽象类抛出错误
+	 	throw new Error('未创建该抽象类');
+	 }
+}
+
+
+//小汽车抽象类
+VehicleFactory.Car = function(){
+	this.type = 'car'；
+}；
+VehicleFactory.Car.prototype = {
+	getPrice: function(){
+		return new Error('抽象方法不能调用')；
+	},
+	getSpeed: function(){
+		return new Error('抽象方法不能调用');
+	}
+};
+
+//公交车抽象类
+VehicleFactory.Bus = function(){
+	this.type = 'bus'；
+}；
+VehicleFactory.Bus.prototype = {
+	getPrice: function(){
+		return new Error('抽象方法不能调用')；
+	},
+	getPassengerNum: function(){
+		return new Error('抽象方法不能调用');
+	}
+};
+
+
+//宝马汽车子类
+var BMW = function(price, speed){
+	this.price = price;
+	this.speed = speed;
+};
+//抽象工厂实现对Car抽象类的继承
+VehicleFactory(BMW, 'Car');
+BMW.prototype.getPrice = function(){
+	return this.price;
+};
+BMW.prototype.getSpeed = function(){
+	return this.speed;
+};
+
+
+//宇通汽车子类
+var YUTONG = function(price, passenger){
+	this.price = price;
+	this.passenger = passenger;
+}
+//抽象工厂实现对BUS抽象类的继承
+VehicelFactory(YUTONG, 'Bus');
+YUTONG.prototype.getPrice = function(){
+	return this.price;
+};
+YUTONG.prototype.getPassengerNum = function(){
+	return this.passenger;
+}
+
+
+//创建实例测试
+var bus = new YUTONG(100000, 40);
+console.log(bus.getPrice());
+console.log(bus.getPassengerNum());
+console.log(bus.type);
+
+
+4)建造者模式
+将一个复杂对象的构建层与其表示层相互分离，同样的构建过程可采用不同的表示。
+
+创建3个类——应聘者类、姓名解析类和期望职位类
+
+var Human = function(param){
+	//技能
+	this.skill = param && param.skill || '保密'；
+	//兴趣爱好
+	this.hobby = param && param.hobby || '保密'；
+}
+
+Human.prototype = function(){
+	getSkill = function(){
+		return this.skill;
+	},
+	getHobby = function(){
+		return this.hobby;
+	}
+}
+
+//实例化姓名类
+var Named = function(){
+	var that = this;
+	//构造器
+	//构造函数解析姓名的姓与名
+	(function(name, that){
+		that.wholeName = name;
+		if(name.indexOf(' ')>-1){
+			that.FirstName = name.slice(0,name.indexOf(' '));
+			that.SecondName = name.slice(name.indexOf(' '));
+		}
+	})(name,that);
+}
+
+//实例化职位类
+var Work = function(work){
+	var that = this;
+	//构造器
+	//构造函数中通过传入的职位特征来设置相应职位以及描述
+	(function(work, that){
+		switch(work){
+			case 'code':
+				that.work = '';
+				that.workDescript = '';
+				break;
+			case 'UI':
+			case 'UE':
+				that.work = '';
+				that.workDescript = '';
+				break;
+			default:
+			that.work = work;
+			that.workDescript = '';
+		}
+	})(work, that);
+}
+
+//更换期望的职位
+Work.prototype.changeWork = function(work){
+	this.work = work;
+}
+//添加对职位的描述
+Work.prototype.changeDescript = function(setence){
+	this.workDescript = setence;
+}
+
+
+//应聘者建造者
+var Person = function(name, work){
+	var _person = new Human();
+
+	_person.name = new Named(name);
+
+	_persion.work = new Work(work);
+
+	return _persion;
+}
+
+var persion = new Person('xiao ming', 'code');
+console.log(person.skill);
+console.log(person.name.FirstName);
+console.log(person.work.work);
+console.log(person.work.workDescript);
